@@ -32,6 +32,48 @@ const motivationalQuotes = [
     "Riprova e migliora!"
 ];
 
+// Aggiungi nuvole come sfondo
+const clouds = [];
+const CLOUD_WIDTH = 200;
+const CLOUD_HEIGHT = 100;
+
+function generateClouds() {
+    const cloudCount = Math.floor(canvas.width / CLOUD_WIDTH) + 1;
+    for (let i = 0; i < cloudCount; i++) {
+        clouds.push({
+            x: i * CLOUD_WIDTH,
+            y: Math.random() * canvas.height / 2, // Nuvole nella parte superiore della finestra
+        });
+    }
+}
+
+// Funzione per disegnare le nuvole
+function drawClouds() {
+    ctx.fillStyle = 'white';
+    clouds.forEach(cloud => {
+        ctx.beginPath();
+        ctx.ellipse(cloud.x, cloud.y, CLOUD_WIDTH / 2, CLOUD_HEIGHT / 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+    });
+}
+
+// Funzione per spostare le nuvole
+function updateClouds() {
+    clouds.forEach(cloud => {
+        cloud.x -= 0.5; // Velocità delle nuvole
+    });
+
+    // Rimuovi le nuvole fuori dallo schermo e aggiungile di nuovo a destra
+    clouds.forEach((cloud, index) => {
+        if (cloud.x + CLOUD_WIDTH < 0) {
+            clouds[index] = {
+                x: canvas.width,
+                y: Math.random() * canvas.height / 2,
+            };
+        }
+    });
+}
+
 // Funzione per disegnare l'uccello
 function drawBird() {
     ctx.fillStyle = 'yellow';
@@ -111,6 +153,9 @@ function updateScore() {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Disegna le nuvole
+    drawClouds();
+
     // Disegna l'uccello
     drawBird();
 
@@ -151,11 +196,14 @@ function draw() {
     // Aggiorna il punteggio
     updateScore();
 
+    // Aggiorna le nuvole
+    updateClouds();
+
     // Riprova il gioco
     requestAnimationFrame(draw);
 }
 
-// Gestione dell'input dell'utente (barra spaziatrice per far saltare l'uccello)
+// Gestione dell'input dell'utente (barra spaziatrice o clic del mouse per far saltare l'uccello)
 document.addEventListener('keydown', (e) => {
     if (e.code === 'Space') {
         if (gameOver) {
@@ -170,5 +218,19 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Inizializza il gioco
+// Clic del mouse per far saltare l'uccello
+canvas.addEventListener('click', () => {
+    if (gameOver) {
+        pipes = [];
+        birdY = canvas.height / 2;
+        birdVelocity = 0;
+        score = 0;
+        gameOver = false;
+    } else {
+        birdFlap = true;
+    }
+});
+
+// Inizializza le nuvole e avvia il gioco
+generateClouds();
 draw();
