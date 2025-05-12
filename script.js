@@ -9,7 +9,7 @@ canvas.height = window.innerHeight;
 // Configurazione iniziale
 const GRAVITY = 0.25;
 const FLAP = -4.5;
-const SPAWN_RATE = 150; // Aumentato per rendere i tubi più distanti
+const SPAWN_RATE = 300; // Aumentato per rendere i tubi più distanti
 const PIPE_WIDTH = 50;
 const PIPE_SPACING = 300; // Aumentato per maggiore distanza tra i tubi
 const BIRD_WIDTH = 30;
@@ -234,3 +234,19 @@ canvas.addEventListener('click', () => {
 // Inizializza le nuvole e avvia il gioco
 generateClouds();
 draw();
+
+
+// Funzioni di controllo dei pulsanti
+document.getElementById('startButton').addEventListener('click', () => {
+    if (gameOver) {
+        pipes = [];
+        birdY = canvas.height / 2;
+        birdVelocity = 0;
+        score = 0;
+        gameOver = false;
+    }
+    gameStarted = true;
+    gamePaused = false;
+    draw();
+});
+
